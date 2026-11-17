@@ -1,0 +1,902 @@
+<!DOCTYPE html>
+<html lang="id" class="dark">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Havelaar Pro // Kalkulator Subnet IPv4 Futuristik</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts: Inter & JetBrains Mono -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap"
+        rel="stylesheet">
+
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                        mono: ['JetBrains Mono', 'monospace'],
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        /* Fallback & Custom Cyber-Network Aesthetics */
+        :root {
+            --bg-dark: #060913;
+            --cyan-glow: rgba(6, 182, 212, 0.35);
+            --emerald-glow: rgba(16, 185, 129, 0.35);
+        }
+
+        body {
+            background-color: var(--bg-dark);
+            background-image:
+                radial-gradient(circle at 15% 15%, rgba(6, 182, 212, 0.12) 0%, transparent 40%),
+                radial-gradient(circle at 85% 25%, rgba(99, 102, 241, 0.14) 0%, transparent 45%),
+                radial-gradient(circle at 50% 90%, rgba(16, 185, 129, 0.10) 0%, transparent 50%),
+                linear-gradient(to right, rgba(255, 255, 255, 0.02) 1px, transparent 1px),
+                linear-gradient(to bottom, rgba(255, 255, 255, 0.02) 1px, transparent 1px);
+            background-size: 100% 100%, 100% 100%, 100% 100%, 36px 36px, 36px 36px;
+            color: #f1f5f9;
+            font-family: 'Inter', sans-serif;
+            overflow-x: hidden;
+        }
+
+        /* Glassmorphism Card */
+        .glass-panel {
+            background: rgba(15, 23, 42, 0.65);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid rgba(148, 163, 184, 0.12);
+            box-shadow: 0 20px 50px -12px rgba(0, 0, 0, 0.6);
+        }
+
+        .glass-card {
+            background: rgba(30, 41, 59, 0.45);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(148, 163, 184, 0.1);
+            transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .glass-card:hover {
+            background: rgba(30, 41, 59, 0.72);
+            border-color: rgba(56, 189, 248, 0.35);
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px -5px rgba(6, 182, 212, 0.15);
+        }
+
+        /* Custom Range Slider */
+        input[type="range"] {
+            -webkit-appearance: none;
+            appearance: none;
+            background: transparent;
+            cursor: pointer;
+        }
+
+        input[type="range"]::-webkit-slider-runnable-track {
+            height: 8px;
+            border-radius: 999px;
+            background: rgba(30, 41, 59, 0.9);
+            border: 1px solid rgba(148, 163, 184, 0.2);
+        }
+
+        input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            height: 22px;
+            width: 22px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #22d3ee, #3b82f6);
+            border: 2px solid #ffffff;
+            margin-top: -8px;
+            box-shadow: 0 0 15px rgba(34, 211, 238, 0.8);
+            transition: transform 0.15s ease, box-shadow 0.15s ease;
+        }
+
+        input[type="range"]::-webkit-slider-thumb:hover {
+            transform: scale(1.15);
+            box-shadow: 0 0 22px rgba(34, 211, 238, 1);
+        }
+
+        /* Bit Box Styling */
+        .bit-net {
+            color: #38bdf8;
+            text-shadow: 0 0 8px rgba(56, 189, 248, 0.45);
+        }
+
+        .bit-host {
+            color: #34d399;
+            text-shadow: 0 0 8px rgba(52, 211, 153, 0.35);
+        }
+
+        .subnet-divider {
+            display: inline-block;
+            width: 2px;
+            height: 1.15em;
+            background: #f43f5e;
+            box-shadow: 0 0 8px #f43f5e;
+            vertical-align: middle;
+            margin: 0 3px;
+            border-radius: 2px;
+        }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: rgba(15, 23, 42, 0.6);
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: rgba(71, 85, 105, 0.7);
+            border-radius: 999px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: rgba(56, 189, 248, 0.6);
+        }
+    </style>
+</head>
+
+<body
+    class="min-h-screen py-6 px-3 sm:px-6 lg:px-8 flex flex-col items-center justify-center selection:bg-cyan-500/30 selection:text-cyan-200">
+
+    <!-- Main Container -->
+    <main class="w-full max-w-5xl space-y-6">
+
+        <!-- Top Header Banner -->
+        <header class="glass-panel rounded-3xl p-6 sm:p-8 relative overflow-hidden">
+            <!-- Decorative Glow Orbs -->
+            <div class="absolute -top-24 -right-24 w-64 h-64 bg-cyan-500/20 rounded-full blur-3xl pointer-events-none">
+            </div>
+            <div
+                class="absolute -bottom-24 -left-24 w-64 h-64 bg-indigo-500/20 rounded-full blur-3xl pointer-events-none">
+            </div>
+
+            <div class="relative flex flex-col md:flex-row md:items-center justify-between gap-4">
+                <div class="flex items-start sm:items-center gap-4">
+                    <div
+                        class="p-3.5 rounded-2xl bg-gradient-to-br from-cyan-500/20 to-blue-600/20 border border-cyan-400/30 shadow-lg shadow-cyan-500/10 shrink-0">
+                        <!-- Network Node SVG Icon -->
+                        <svg class="w-8 h-8 text-cyan-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"
+                            stroke-width="1.8">
+                            <path stroke-linecap="round" stroke-linejoin="round"
+                                d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9a9 9 0 01-9-9m9 9c1.657 0 3-4.03 3-9s-1.343-9-3-9m0 18c-1.657 0-3-4.03-3-9s1.343-9 3-9m-9 9a9 9 0 019-9" />
+                        </svg>
+                    </div>
+                    <div>
+                        <div class="flex items-center gap-2.5 flex-wrap">
+                            <h1
+                                class="text-2xl sm:text-3xl font-extrabold tracking-tight bg-gradient-to-r from-white via-cyan-100 to-cyan-400 bg-clip-text text-transparent">
+                                Havelaar Pro IPv4
+                            </h1>
+                            <span
+                                class="px-2.5 py-0.5 text-[11px] font-mono font-semibold uppercase tracking-wider rounded-full bg-cyan-500/15 text-cyan-300 border border-cyan-400/30">
+                                CIDR & VLSM Engine
+                            </span>
+                        </div>
+                        <p class="text-slate-400 text-xs sm:text-sm mt-1">
+                            Kalkulator subnetting presisi tinggi dengan visualisasi bitwise 32-bit & eksplorasi blok
+                            jaringan.
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Random IP Button -->
+                <button onclick="generateRandomIp()"
+                    class="self-start md:self-auto flex items-center gap-2 px-4 py-2.5 rounded-xl bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-400 hover:to-blue-500 text-slate-950 font-semibold text-xs sm:text-sm shadow-lg shadow-cyan-500/25 transition-all active:scale-95 cursor-pointer">
+                    <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.2">
+                        <path stroke-linecap="round" stroke-linejoin="round"
+                            d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+                    </svg>
+                    <span>Acak IP</span>
+                </button>
+            </div>
+
+            <!-- Quick Presets Bar -->
+            <div class="relative mt-6 pt-5 border-t border-slate-700/50 flex flex-wrap items-center gap-2">
+                <span class="text-xs font-medium text-slate-400 mr-1 flex items-center gap-1.5">
+                    <svg class="w-3.5 h-3.5 text-cyan-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"
+                        stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M13 10V3L4 14h7v7l9-11h-7z" />
+                    </svg>
+                    Preset Cepat:
+                </span>
+                <button onclick="setPreset('10.0.0.1', 8)"
+                    class="preset-btn px-3 py-1.5 rounded-lg text-xs font-mono bg-slate-800/80 hover:bg-cyan-500/20 text-slate-300 hover:text-cyan-300 border border-slate-700 hover:border-cyan-500/40 transition cursor-pointer">
+                    Kelas A (/8)
+                </button>
+                <button onclick="setPreset('172.16.32.10', 16)"
+                    class="preset-btn px-3 py-1.5 rounded-lg text-xs font-mono bg-slate-800/80 hover:bg-cyan-500/20 text-slate-300 hover:text-cyan-300 border border-slate-700 hover:border-cyan-500/40 transition cursor-pointer">
+                    Kelas B (/16)
+                </button>
+                <button onclick="setPreset('192.168.1.10', 24)"
+                    class="preset-btn px-3 py-1.5 rounded-lg text-xs font-mono bg-slate-800/80 hover:bg-cyan-500/20 text-slate-300 hover:text-cyan-300 border border-slate-700 hover:border-cyan-500/40 transition cursor-pointer">
+                    Kelas C (/24)
+                </button>
+                <button onclick="setPreset('203.0.113.14', 30)"
+                    class="preset-btn px-3 py-1.5 rounded-lg text-xs font-mono bg-slate-800/80 hover:bg-cyan-500/20 text-slate-300 hover:text-cyan-300 border border-slate-700 hover:border-cyan-500/40 transition cursor-pointer">
+                    P2P (/30)
+                </button>
+                <button onclick="setPreset('198.51.100.2', 31)"
+                    class="preset-btn px-3 py-1.5 rounded-lg text-xs font-mono bg-slate-800/80 hover:bg-cyan-500/20 text-slate-300 hover:text-cyan-300 border border-slate-700 hover:border-cyan-500/40 transition cursor-pointer">
+                    RFC 3021 (/31)
+                </button>
+                <button onclick="setPreset('8.8.8.8', 32)"
+                    class="preset-btn px-3 py-1.5 rounded-lg text-xs font-mono bg-slate-800/80 hover:bg-cyan-500/20 text-slate-300 hover:text-cyan-300 border border-slate-700 hover:border-cyan-500/40 transition cursor-pointer">
+                    Single Host (/32)
+                </button>
+            </div>
+        </header>
+
+        <!-- Input & Bit Allocation Section -->
+        <section class="glass-panel rounded-3xl p-6 sm:p-8 space-y-6">
+            <div class="grid grid-cols-1 md:grid-cols-12 gap-5 items-end">
+                <!-- IP Address Input -->
+                <div class="md:col-span-8">
+                    <div class="flex justify-between items-center mb-2">
+                        <label for="ipInput" class="text-xs font-semibold uppercase tracking-wider text-slate-300">
+                            Alamat IPv4 (Host / Network)
+                        </label>
+                        <span id="ipBadge"
+                            class="text-[11px] font-mono px-2 py-0.5 rounded bg-slate-800 text-cyan-300 border border-slate-700">
+                            Valid IPv4
+                        </span>
+                    </div>
+                    <div class="relative">
+                        <input type="text" id="ipInput" value="192.168.1.10" placeholder="Contoh: 192.168.1.10"
+                            autocomplete="off"
+                            class="w-full px-4 py-3.5 bg-slate-950/80 border border-slate-700/80 rounded-2xl font-mono text-lg sm:text-xl text-white placeholder-slate-600 focus:outline-none focus:border-cyan-400 focus:ring-2 focus:ring-cyan-500/20 transition">
+                        <button
+                            onclick="copyValue(document.getElementById('ipInput').value + '/' + document.getElementById('prefixInput').value)"
+                            title="Salin CIDR Lengkap"
+                            class="absolute right-3 top-1/2 -translate-y-1/2 px-2.5 py-1.5 rounded-lg bg-slate-800/90 hover:bg-slate-700 text-xs font-mono text-slate-300 border border-slate-600/50 transition cursor-pointer">
+                            Copy CIDR
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Prefix CIDR Input -->
+                <div class="md:col-span-4">
+                    <div class="flex justify-between items-center mb-2">
+                        <label for="prefixInput" class="text-xs font-semibold uppercase tracking-wider text-slate-300">
+                            Prefix (CIDR)
+                        </label>
+                        <span id="subnetMaskHint" class="text-[11px] font-mono text-slate-400">
+                            255.255.255.0
+                        </span>
+                    </div>
+                    <div
+                        class="flex items-center bg-slate-950/80 border border-slate-700/80 rounded-2xl px-4 py-2 focus-within:border-cyan-400 focus-within:ring-2 focus-within:ring-cyan-500/20 transition">
+                        <span class="text-2xl font-mono font-bold text-cyan-400 mr-2">/</span>
+                        <input type="number" id="prefixInput" value="24" min="1" max="32"
+                            class="w-full bg-transparent font-mono text-lg sm:text-xl font-bold text-white focus:outline-none py-1.5">
+                        <div class="flex gap-1 ml-2">
+                            <button onclick="adjustPrefix(-1)"
+                                class="w-8 h-8 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-200 font-bold flex items-center justify-center transition cursor-pointer"
+                                title="Kurangi Prefix">-</button>
+                            <button onclick="adjustPrefix(1)"
+                                class="w-8 h-8 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-200 font-bold flex items-center justify-center transition cursor-pointer"
+                                title="Tambah Prefix">+</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Interactive Range Slider & Live Bit Allocation Bar -->
+            <div class="bg-slate-950/60 border border-slate-800/90 rounded-2xl p-4 sm:p-5 space-y-4">
+                <div class="flex flex-wrap justify-between items-center gap-2 text-xs">
+                    <div class="flex items-center gap-4">
+                        <span class="flex items-center gap-1.5 font-medium text-cyan-400">
+                            <span class="w-2.5 h-2.5 rounded-full bg-cyan-400 shadow-[0_0_8px_#22d3ee]"></span>
+                            Network Bits: <strong id="netBitsLabel" class="font-mono text-white">24</strong>
+                        </span>
+                        <span class="flex items-center gap-1.5 font-medium text-emerald-400">
+                            <span class="w-2.5 h-2.5 rounded-full bg-emerald-400 shadow-[0_0_8px_#34d399]"></span>
+                            Host Bits: <strong id="hostBitsLabel" class="font-mono text-white">8</strong>
+                        </span>
+                    </div>
+                    <span class="text-slate-400 font-mono text-[11px]">Geser slider untuk simulasi subnet</span>
+                </div>
+
+                <!-- Visual Progress Bar (Network vs Host Proportion) -->
+                <div class="w-full h-3 rounded-full bg-slate-800 overflow-hidden flex p-0.5 border border-slate-700/70">
+                    <div id="netBar"
+                        class="h-full bg-gradient-to-r from-cyan-500 to-blue-500 rounded-l-full transition-all duration-200"
+                        style="width: 75%;"></div>
+                    <div id="hostBar"
+                        class="h-full bg-gradient-to-r from-emerald-500 to-teal-400 rounded-r-full transition-all duration-200"
+                        style="width: 25%;"></div>
+                </div>
+
+                <!-- Range Slider -->
+                <div class="pt-1">
+                    <input type="range" id="prefixSlider" min="1" max="32" value="24" class="w-full">
+                    <div class="flex justify-between text-[10px] font-mono text-slate-500 mt-1.5 px-0.5">
+                        <span>/1</span>
+                        <span>/8 (A)</span>
+                        <span>/16 (B)</span>
+                        <span>/24 (C)</span>
+                        <span>/32</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Error Alert Box -->
+            <div id="errorBox"
+                class="hidden flex items-center gap-3 p-4 rounded-2xl bg-rose-950/60 border border-rose-500/40 text-rose-200 text-sm">
+                <svg class="w-5 h-5 text-rose-400 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor"
+                    stroke-width="2">
+                    <path stroke-linecap="round" stroke-linejoin="round"
+                        d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+                <span id="errorMessage">Format IPv4 tidak valid.</span>
+            </div>
+        </section>
+
+        <!-- Main Results Container -->
+        <div id="resultsWrapper" class="space-y-6 transition-opacity duration-300">
+
+            <!-- Primary Metrics Grid -->
+            <section class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4" id="cardsContainer">
+                <!-- Cards rendered dynamically via JS -->
+            </section>
+
+            <!-- 32-Bit Interactive Bitwise Visualizer -->
+            <section class="glass-panel rounded-3xl p-6 sm:p-8">
+                <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 mb-5">
+                    <div>
+                        <h2 class="text-base sm:text-lg font-bold text-white flex items-center gap-2">
+                            <svg class="w-5 h-5 text-cyan-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"
+                                stroke-width="2">
+                                <path stroke-linecap="round" stroke-linejoin="round"
+                                    d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4" />
+                            </svg>
+                            Visualisasi Bitwise 32-Bit Biner
+                        </h2>
+                        <p class="text-xs text-slate-400 mt-0.5">
+                            Garis merah (<span class="text-rose-400 font-bold">|</span>) menunjukkan batas pemisah
+                            antara porsi Network dan Host.
+                        </p>
+                    </div>
+                    <div class="flex items-center gap-3 text-xs font-mono">
+                        <span class="px-2.5 py-1 rounded-lg bg-cyan-500/10 border border-cyan-500/30 text-cyan-300">Bit
+                            Network</span>
+                        <span
+                            class="px-2.5 py-1 rounded-lg bg-emerald-500/10 border border-emerald-500/30 text-emerald-300">Bit
+                            Host</span>
+                    </div>
+                </div>
+
+                <div class="bg-slate-950/80 border border-slate-800 rounded-2xl p-4 sm:p-5 overflow-x-auto">
+                    <table class="w-full text-left border-collapse min-w-[540px]">
+                        <thead>
+                            <tr class="text-[11px] font-mono uppercase text-slate-500 border-b border-slate-800">
+                                <th class="pb-2.5 font-medium w-36">Parameter</th>
+                                <th class="pb-2.5 font-medium">Representasi Biner (Oktet 1 . Oktet 2 . Oktet 3 . Oktet
+                                    4)</th>
+                                <th class="pb-2.5 font-medium text-right">Desimal</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-slate-800/70 font-mono text-xs sm:text-sm" id="binaryTableBody">
+                            <!-- Binary rows rendered dynamically -->
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+
+            <!-- Subnet Breakdown / VLSM Explorer Table -->
+            <section class="glass-panel rounded-3xl p-6 sm:p-8">
+                <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 mb-5">
+                    <div>
+                        <h2 class="text-base sm:text-lg font-bold text-white flex items-center gap-2">
+                            <svg class="w-5 h-5 text-indigo-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"
+                                stroke-width="2">
+                                <path stroke-linecap="round" stroke-linejoin="round"
+                                    d="M4 6h16M4 10h16M4 14h16M4 18h16" />
+                            </svg>
+                            Eksplorasi Blok Subnet (VLSM Helper)
+                        </h2>
+                        <p class="text-xs text-slate-400 mt-0.5" id="subnetTableSubtitle">
+                            Menampilkan daftar blok subnet berurutan di sekitar jaringan saat ini.
+                        </p>
+                    </div>
+                    <span id="blockSizeBadge"
+                        class="self-start sm:self-auto px-3 py-1 rounded-full text-xs font-mono bg-indigo-500/15 text-indigo-300 border border-indigo-400/30">
+                        Ukuran Blok: 256 IP
+                    </span>
+                </div>
+
+                <div class="overflow-x-auto rounded-2xl border border-slate-800 bg-slate-950/70">
+                    <table class="w-full text-left border-collapse min-w-[600px]">
+                        <thead>
+                            <tr
+                                class="bg-slate-900/90 text-[11px] font-mono uppercase text-slate-400 border-b border-slate-800">
+                                <th class="py-3 px-4">#</th>
+                                <th class="py-3 px-4">Network Address</th>
+                                <th class="py-3 px-4">Range Host Valid</th>
+                                <th class="py-3 px-4">Broadcast Address</th>
+                                <th class="py-3 px-4 text-right">Aksi</th>
+                            </tr>
+                        </thead>
+                        <tbody id="subnetBlocksBody" class="divide-y divide-slate-800/60 font-mono text-xs sm:text-sm">
+                            <!-- Subnet blocks rendered dynamically -->
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+        </div>
+
+        <!-- Footer -->
+        <footer class="text-center text-xs text-slate-500 pb-4">
+            NetCalc Pro IPv4 &bull; Perhitungan Bitwise 32-Bit Presisi Tinggi
+        </footer>
+    </main>
+
+    <!-- Floating Copy Notification Toast -->
+    <div id="toast"
+        class="fixed bottom-6 right-6 z-50 flex items-center gap-2.5 px-4 py-3 rounded-2xl bg-slate-900/95 border border-cyan-500/50 text-white shadow-2xl shadow-cyan-500/20 backdrop-blur-md translate-y-16 opacity-0 transition-all duration-300 pointer-events-none">
+        <div class="w-6 h-6 rounded-full bg-cyan-500/20 flex items-center justify-center text-cyan-400">
+            <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" />
+            </svg>
+        </div>
+        <div>
+            <p class="text-xs font-semibold text-white">Tersalin ke Clipboard!</p>
+            <p id="toastValue" class="text-[11px] font-mono text-cyan-300">192.168.1.0/24</p>
+        </div>
+    </div>
+
+    <script>
+        // DOM Elements
+        const ipInput = document.getElementById('ipInput');
+        const prefixInput = document.getElementById('prefixInput');
+        const prefixSlider = document.getElementById('prefixSlider');
+        const subnetMaskHint = document.getElementById('subnetMaskHint');
+        const ipBadge = document.getElementById('ipBadge');
+        const netBitsLabel = document.getElementById('netBitsLabel');
+        const hostBitsLabel = document.getElementById('hostBitsLabel');
+        const netBar = document.getElementById('netBar');
+        const hostBar = document.getElementById('hostBar');
+        const errorBox = document.getElementById('errorBox');
+        const errorMessage = document.getElementById('errorMessage');
+        const resultsWrapper = document.getElementById('resultsWrapper');
+        const cardsContainer = document.getElementById('cardsContainer');
+        const binaryTableBody = document.getElementById('binaryTableBody');
+        const subnetBlocksBody = document.getElementById('subnetBlocksBody');
+        const blockSizeBadge = document.getElementById('blockSizeBadge');
+
+        // Helper: Unsigned 32-bit integer to Dotted Decimal IPv4
+        function intToIp(int) {
+            return [
+                (int >>> 24) & 255,
+                (int >>> 16) & 255,
+                (int >>> 8) & 255,
+                int & 255
+            ].join('.');
+        }
+
+        // Helper: Dotted Decimal IPv4 to Unsigned 32-bit integer
+        function ipToInt(ipStr) {
+            const octets = ipStr.split('.').map(Number);
+            return ((octets[0] << 24) | (octets[1] << 16) | (octets[2] << 8) | octets[3]) >>> 0;
+        }
+
+        // Helper: Format 32-bit int into colored HTML binary string with subnet divider
+        function formatColoredBinary(int, prefix) {
+            const binStr = int.toString(2).padStart(32, '0');
+            let html = '';
+            for (let i = 0; i < 32; i++) {
+                if (i > 0 && i % 8 === 0) {
+                    html += '<span class="text-slate-600 mx-1">.</span>';
+                }
+                if (i === prefix) {
+                    html += '<span class="subnet-divider" title="Batas Subnet /' + prefix + '"></span>';
+                }
+                const bitClass = i < prefix ? 'bit-net font-semibold' : 'bit-host';
+                html += `<span class="${bitClass}">${binStr[i]}</span>`;
+            }
+            if (prefix === 32) {
+                html += '<span class="subnet-divider" title="Batas Subnet /32"></span>';
+            }
+            return html;
+        }
+
+        // Helper: Detect IP Class & Scope (Private/Public/Special)
+        function analyzeIpCategory(octets) {
+            const [o1, o2, o3] = octets;
+            let ipClass = 'Kelas A';
+            if (o1 >= 1 && o1 <= 126) ipClass = 'Kelas A';
+            else if (o1 === 127) ipClass = 'Loopback';
+            else if (o1 >= 128 && o1 <= 191) ipClass = 'Kelas B';
+            else if (o1 >= 192 && o1 <= 223) ipClass = 'Kelas C';
+            else if (o1 >= 224 && o1 <= 239) ipClass = 'Kelas D (Multicast)';
+            else if (o1 >= 240 && o1 <= 255) ipClass = 'Kelas E (Eksperimental)';
+            else if (o1 === 0) ipClass = 'Current Network';
+
+            let scope = 'IP Publik';
+            let badgeColor = 'text-amber-300 bg-amber-500/15 border-amber-500/30';
+
+            if (
+                o1 === 10 ||
+                (o1 === 172 && o2 >= 16 && o2 <= 31) ||
+                (o1 === 192 && o2 === 168)
+            ) {
+                scope = 'IP Privat (RFC 1918)';
+                badgeColor = 'text-emerald-300 bg-emerald-500/15 border-emerald-500/30';
+            } else if (o1 === 127) {
+                scope = 'Localhost / Loopback';
+                badgeColor = 'text-purple-300 bg-purple-500/15 border-purple-500/30';
+            } else if (o1 === 169 && o2 === 254) {
+                scope = 'APIPA / Link-Local';
+                badgeColor = 'text-orange-300 bg-orange-500/15 border-orange-500/30';
+            } else if (o1 === 100 && o2 >= 64 && o2 <= 127) {
+                scope = 'CGNAT (RFC 6598)';
+                badgeColor = 'text-sky-300 bg-sky-500/15 border-sky-500/30';
+            } else if (
+                (o1 === 192 && o2 === 0 && o3 === 2) ||
+                (o1 === 198 && o2 === 51 && o3 === 100) ||
+                (o1 === 203 && o2 === 0 && o3 === 113)
+            ) {
+                scope = 'TEST-NET (Dokumentasi)';
+                badgeColor = 'text-indigo-300 bg-indigo-500/15 border-indigo-500/30';
+            } else if (o1 >= 224) {
+                scope = 'Reserved / Multicast';
+                badgeColor = 'text-rose-300 bg-rose-500/15 border-rose-500/30';
+            }
+
+            return { ipClass, scope, badgeColor, fullLabel: `${ipClass} • ${scope}` };
+        }
+
+        // Core Calculation Engine
+        function calculate() {
+            const rawIp = ipInput.value.trim();
+            const prefix = parseInt(prefixInput.value, 10);
+
+            // Update visual bit bar immediately if prefix is valid
+            if (!isNaN(prefix) && prefix >= 1 && prefix <= 32) {
+                const hostBits = 32 - prefix;
+                netBitsLabel.textContent = prefix;
+                hostBitsLabel.textContent = hostBits;
+                netBar.style.width = `${(prefix / 32) * 100}%`;
+                hostBar.style.width = `${(hostBits / 32) * 100}%`;
+
+                const previewMaskInt = (0xFFFFFFFF << (32 - prefix)) >>> 0;
+                subnetMaskHint.textContent = intToIp(previewMaskInt);
+            }
+
+            // Strict IPv4 Validation
+            const ipv4Regex = /^(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)(\.(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)){3}$/;
+            if (!ipv4Regex.test(rawIp)) {
+                showError('Format Alamat IPv4 tidak valid. Masukkan 4 oktet angka antara 0 - 255 (contoh: 192.168.1.10).');
+                ipBadge.textContent = 'Invalid IP';
+                ipBadge.className = 'text-[11px] font-mono px-2 py-0.5 rounded bg-rose-950 text-rose-300 border border-rose-700';
+                return;
+            }
+
+            if (isNaN(prefix) || prefix < 1 || prefix > 32) {
+                showError('Prefix CIDR harus berupa angka antara 1 hingga 32.');
+                return;
+            }
+
+            // Valid State
+            errorBox.classList.add('hidden');
+            resultsWrapper.classList.remove('hidden');
+
+            const octets = rawIp.split('.').map(Number);
+            const category = analyzeIpCategory(octets);
+            ipBadge.textContent = category.ipClass;
+            ipBadge.className = 'text-[11px] font-mono px-2 py-0.5 rounded bg-cyan-950 text-cyan-300 border border-cyan-700/60';
+
+            // Bitwise Math
+            const ipInt = ipToInt(rawIp);
+            const maskInt = (0xFFFFFFFF << (32 - prefix)) >>> 0;
+            const wildcardInt = (~maskInt) >>> 0;
+            const netInt = (ipInt & maskInt) >>> 0;
+            const broadInt = (netInt | wildcardInt) >>> 0;
+
+            const networkAddr = intToIp(netInt);
+            const broadcastAddr = intToIp(broadInt);
+            const subnetMask = intToIp(maskInt);
+            const wildcardMask = intToIp(wildcardInt);
+
+            // Usable Hosts & Range Calculation
+            const totalIps = Math.pow(2, 32 - prefix);
+            let usableHosts = 0;
+            let hostRange = '';
+            let firstUsable = '';
+            let lastUsable = '';
+
+            if (prefix === 32) {
+                usableHosts = 1;
+                firstUsable = networkAddr;
+                lastUsable = networkAddr;
+                hostRange = `${networkAddr} (Host Tunggal)`;
+            } else if (prefix === 31) {
+                usableHosts = 2;
+                firstUsable = networkAddr;
+                lastUsable = broadcastAddr;
+                hostRange = `${networkAddr} - ${broadcastAddr}`;
+            } else {
+                usableHosts = totalIps - 2;
+                firstUsable = intToIp((netInt + 1) >>> 0);
+                lastUsable = intToIp((broadInt - 1) >>> 0);
+                hostRange = `${firstUsable} - ${lastUsable}`;
+            }
+
+            // Render Primary Cards
+            const metrics = [
+                {
+                    title: 'Network Address',
+                    value: `${networkAddr}/${prefix}`,
+                    copyVal: networkAddr,
+                    sub: 'Identitas utama blok jaringan',
+                    accent: 'text-cyan-400',
+                    icon: `<path stroke-linecap="round" stroke-linejoin="round" d="M5 12h14M5 12a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v4a2 2 0 01-2 2M5 12a2 2 0 00-2 2v4a2 2 0 002 2h14a2 2 0 002-2v-4a2 2 0 00-2-2" />`
+                },
+                {
+                    title: 'Broadcast Address',
+                    value: broadcastAddr,
+                    copyVal: broadcastAddr,
+                    sub: 'Alamat pengiriman ke seluruh host',
+                    accent: 'text-rose-400',
+                    icon: `<path stroke-linecap="round" stroke-linejoin="round" d="M11 5.882V19.24a1.76 1.76 0 01-3.417.592l-2.147-6.15M18 13a3 3 0 100-6M5.436 13.683A4.001 4.001 0 017 6h1.832c4.1 0 7.625-1.234 9.168-3v14c-1.543-1.766-5.067-3-9.168-3H7a3.988 3.988 0 01-1.564-.317z" />`
+                },
+                {
+                    title: 'Range Host Valid',
+                    value: hostRange,
+                    copyVal: hostRange,
+                    sub: prefix <= 30 ? `IP Pertama: ${firstUsable} • Terakhir: ${lastUsable}` : 'Mode khusus RFC Point-to-Point / Single Host',
+                    accent: 'text-emerald-400',
+                    icon: `<path stroke-linecap="round" stroke-linejoin="round" d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4" />`
+                },
+                {
+                    title: 'Jumlah Host Valid',
+                    value: usableHosts.toLocaleString('id-ID'),
+                    copyVal: usableHosts.toString(),
+                    sub: `Total Alokasi IP: ${totalIps.toLocaleString('id-ID')} alamat`,
+                    accent: 'text-white',
+                    icon: `<path stroke-linecap="round" stroke-linejoin="round" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z" />`
+                },
+                {
+                    title: 'Subnet Mask & Wildcard',
+                    value: subnetMask,
+                    copyVal: subnetMask,
+                    sub: `Wildcard: ${wildcardMask}`,
+                    accent: 'text-blue-400',
+                    icon: `<path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />`
+                },
+                {
+                    title: 'Kategori & Tipe IP',
+                    value: category.scope,
+                    copyVal: category.fullLabel,
+                    sub: `Klasifikasi: ${category.ipClass}`,
+                    accent: 'text-indigo-300',
+                    icon: `<path stroke-linecap="round" stroke-linejoin="round" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z" />`
+                }
+            ];
+
+            cardsContainer.innerHTML = metrics.map(item => `
+                <div class="glass-card rounded-2xl p-5 flex flex-col justify-between group">
+                    <div class="flex items-start justify-between gap-2">
+                        <div class="flex items-center gap-2 text-xs font-medium text-slate-400">
+                            <svg class="w-4 h-4 ${item.accent} shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                ${item.icon}
+                            </svg>
+                            <span>${item.title}</span>
+                        </div>
+                        <button onclick="copyValue('${item.copyVal}')" title="Salin ${item.title}"
+                            class="p-1.5 rounded-lg bg-slate-800/80 hover:bg-cyan-500/20 text-slate-400 hover:text-cyan-300 border border-slate-700/70 hover:border-cyan-500/40 transition cursor-pointer">
+                            <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
+                            </svg>
+                        </button>
+                    </div>
+                    <div class="my-2.5">
+                        <div class="font-mono font-bold text-base sm:text-lg ${item.accent} break-all">
+                            ${item.value}
+                        </div>
+                    </div>
+                    <div class="text-[11px] font-mono text-slate-400 border-t border-slate-700/50 pt-2">
+                        ${item.sub}
+                    </div>
+                </div>
+            `).join('');
+
+            // Render 32-Bit Binary Table
+            const binaryRows = [
+                { label: 'IP Address', intVal: ipInt, decVal: rawIp },
+                { label: 'Subnet Mask', intVal: maskInt, decVal: subnetMask },
+                { label: 'Wildcard Mask', intVal: wildcardInt, decVal: wildcardMask },
+                { label: 'Network Address', intVal: netInt, decVal: networkAddr },
+                { label: 'Broadcast Address', intVal: broadInt, decVal: broadcastAddr }
+            ];
+
+            binaryTableBody.innerHTML = binaryRows.map(row => `
+                <tr class="hover:bg-slate-900/50 transition">
+                    <td class="py-3 pr-3 text-slate-300 font-sans font-medium">${row.label}</td>
+                    <td class="py-3 px-2 whitespace-nowrap tracking-wider">${formatColoredBinary(row.intVal, prefix)}</td>
+                    <td class="py-3 pl-3 text-right text-slate-300 whitespace-nowrap">${row.decVal}</td>
+                </tr>
+            `).join('');
+
+            // Render Subnet Breakdown / Adjacent Blocks Table
+            renderSubnetBlocks(netInt, prefix, totalIps);
+        }
+
+        // Render Adjacent Subnet Blocks (VLSM Helper)
+        function renderSubnetBlocks(currentNetInt, prefix, blockSize) {
+            blockSizeBadge.textContent = `Ukuran Blok: ${blockSize.toLocaleString('id-ID')} IP`;
+
+            // Show up to 6 blocks centered around the current network block
+            const maxBlocksToShow = 6;
+            const step = blockSize;
+
+            // Calculate starting block index so current block is visible
+            const currentBlockIndex = Math.floor(currentNetInt / step);
+            const totalPossibleBlocks = Math.pow(2, prefix);
+
+            let startBlockIndex = Math.max(0, currentBlockIndex - 1);
+            if (startBlockIndex + maxBlocksToShow > totalPossibleBlocks) {
+                startBlockIndex = Math.max(0, totalPossibleBlocks - maxBlocksToShow);
+            }
+
+            const count = Math.min(maxBlocksToShow, totalPossibleBlocks);
+            let rowsHtml = '';
+
+            for (let i = 0; i < count; i++) {
+                const idx = startBlockIndex + i;
+                const bNetInt = (idx * step) >>> 0;
+                const bBroadInt = (bNetInt + step - 1) >>> 0;
+                const isCurrent = bNetInt === currentNetInt;
+
+                const bNet = intToIp(bNetInt);
+                const bBroad = intToIp(bBroadInt);
+                let bRange = '';
+
+                if (prefix === 32) {
+                    bRange = `${bNet}`;
+                } else if (prefix === 31) {
+                    bRange = `${bNet} - ${bBroad}`;
+                } else {
+                    bRange = `${intToIp((bNetInt + 1) >>> 0)} - ${intToIp((bBroadInt - 1) >>> 0)}`;
+                }
+
+                rowsHtml += `
+                    <tr class="${isCurrent ? 'bg-cyan-500/10 text-cyan-200' : 'hover:bg-slate-900/60 text-slate-300'} transition">
+                        <td class="py-3 px-4">
+                            ${isCurrent
+                        ? '<span class="px-2 py-0.5 text-[10px] font-bold rounded bg-cyan-500 text-slate-950">AKTIF</span>'
+                        : `<span class="text-slate-500">#${idx + 1}</span>`}
+                        </td>
+                        <td class="py-3 px-4 font-semibold ${isCurrent ? 'text-cyan-300' : 'text-white'}">${bNet}/${prefix}</td>
+                        <td class="py-3 px-4 text-emerald-400/90">${bRange}</td>
+                        <td class="py-3 px-4 text-rose-400/90">${bBroad}</td>
+                        <td class="py-3 px-4 text-right">
+                            <button onclick="selectSubnetBlock('${bNet}', ${prefix})" 
+                                class="px-2.5 py-1 rounded-lg text-xs bg-slate-800 hover:bg-cyan-500/20 text-slate-300 hover:text-cyan-300 border border-slate-700 hover:border-cyan-500/40 transition cursor-pointer">
+                                Pilih
+                            </button>
+                        </td>
+                    </tr>
+                `;
+            }
+
+            subnetBlocksBody.innerHTML = rowsHtml;
+        }
+
+        function showError(msg) {
+            errorMessage.textContent = msg;
+            errorBox.classList.remove('hidden');
+            resultsWrapper.classList.add('hidden');
+        }
+
+        function setPreset(ip, prefix) {
+            ipInput.value = ip;
+            prefixInput.value = prefix;
+            prefixSlider.value = prefix;
+            calculate();
+        }
+
+        function selectSubnetBlock(netIp, prefix) {
+            // Set input to first usable IP or network IP of that block
+            const netInt = ipToInt(netIp);
+            const targetIp = prefix < 31 ? intToIp((netInt + 1) >>> 0) : netIp;
+            ipInput.value = targetIp;
+            prefixInput.value = prefix;
+            prefixSlider.value = prefix;
+            calculate();
+        }
+
+        function adjustPrefix(delta) {
+            let current = parseInt(prefixInput.value, 10) || 24;
+            let next = Math.min(32, Math.max(1, current + delta));
+            prefixInput.value = next;
+            prefixSlider.value = next;
+            calculate();
+        }
+
+        function generateRandomIp() {
+            const templates = [
+                () => `10.${rand(0, 255)}.${rand(0, 255)}.${rand(1, 254)}`,
+                () => `172.${rand(16, 31)}.${rand(0, 255)}.${rand(1, 254)}`,
+                () => `192.168.${rand(0, 255)}.${rand(1, 254)}`,
+                () => `${rand(1, 223)}.${rand(0, 255)}.${rand(0, 255)}.${rand(1, 254)}`
+            ];
+            const randomIp = templates[rand(0, templates.length - 1)]();
+            const randomPrefix = rand(8, 30);
+            setPreset(randomIp, randomPrefix);
+        }
+
+        function rand(min, max) {
+            return Math.floor(Math.random() * (max - min + 1)) + min;
+        }
+
+        // Clipboard Copy with Fallback (execCommand for iframe compatibility)
+        let toastTimeout;
+        function copyValue(text) {
+            const textArea = document.createElement('textarea');
+            textArea.value = text;
+            textArea.style.position = 'fixed';
+            textArea.style.left = '-9999px';
+            document.body.appendChild(textArea);
+            textArea.select();
+            try {
+                document.execCommand('copy');
+                showToast(text);
+            } catch (err) {
+                if (navigator.clipboard) {
+                    navigator.clipboard.writeText(text).then(() => showToast(text));
+                }
+            }
+            document.body.removeChild(textArea);
+        }
+
+        function showToast(copiedText) {
+            const toast = document.getElementById('toast');
+            const toastValue = document.getElementById('toastValue');
+            toastValue.textContent = copiedText;
+            toast.classList.remove('translate-y-16', 'opacity-0');
+
+            clearTimeout(toastTimeout);
+            toastTimeout = setTimeout(() => {
+                toast.classList.add('translate-y-16', 'opacity-0');
+            }, 2200);
+        }
+
+        // Event Listeners
+        ipInput.addEventListener('input', calculate);
+
+        prefixInput.addEventListener('input', () => {
+            let val = parseInt(prefixInput.value, 10);
+            if (!isNaN(val)) {
+                if (val > 32) val = 32;
+                if (val < 1) val = 1;
+                prefixSlider.value = val;
+            }
+            calculate();
+        });
+
+        prefixSlider.addEventListener('input', () => {
+            prefixInput.value = prefixSlider.value;
+            calculate();
+        });
+
+        // Initial Run
+        window.addEventListener('DOMContentLoaded', calculate);
+        calculate();
+    </script>
+</body>
+
+</html>
